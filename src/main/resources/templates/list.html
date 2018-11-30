@@ -55,14 +55,15 @@
         <div class="row">
           <div class="col-md-12">
             <h2>Clientes</h2>    
-            <a href="@{/clients/form}">Crear client</a>      
+            <a th:href="@{/clients/form}">Crear cliente</a>      
             <table class="table">
             	<thead>
             		<th>ID</th>
             		<th>NOMBRE</th>
             		<th>APELLIDOS</th>
             		<th>EMAIL</th>
-            		<th>FECHA</th>
+            		<th>FECHA NACIMIENTO</th>
+            		<th>FECHA CREACIÓN</th>
             	</thead>
             	<tbody>
             		<tr th:each="client: ${clients}">
@@ -70,6 +71,7 @@
             			<td th:text="${client.name}"></td>
             			<td th:text="${client.surname}"></td>
             			<td th:text="${client.email}"></td>
+            			<td th:text="${client.birthDate}"></td> 
             			<td th:text="${client.createAt}"></td>            		            			
             		</tr>
             	</tbody>
