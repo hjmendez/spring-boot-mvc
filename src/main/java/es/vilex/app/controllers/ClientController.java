@@ -16,6 +16,7 @@ package es.vilex.app.controllers;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -35,14 +37,17 @@ import es.vilex.app.services.ClientService;
 @SessionAttributes("client")
 public class ClientController {
 
+  private final static int PAGE_SIZE_DEFATULT = 5;
+
   @Autowired
   private ClientService clientService;
 
   @GetMapping("/list")
   @DatabaseLock
-  public String list(Model model) {
+  public String list(Model model, @RequestParam(name = "page", defaultValue = "0") int page) {
+    PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE_DEFATULT);
     model.addAttribute("title", "Listado de clientes");
-    model.addAttribute("clients", clientService.findAll());
+    model.addAttribute("clients", clientService.findAll(pageRequest));
     return "list";
   }
 
