@@ -15,16 +15,40 @@
 package es.vilex.app.services;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import es.vilex.app.dao.ClientDao;
 import es.vilex.app.entities.Client;
 
-public interface ClientService {
+@Service
+public class ClientServiceImpl implements ClientService {
 
-  public List<Client> findAll();
+  @Autowired
+  private ClientDao clientDao;
 
-  public Client findById(Long id);
+  @Override
+  @Transactional(readOnly = true)
+  public List<Client> findAll() {
+    return clientDao.findAll();
+  }
 
-  public void save(Client client);
+  @Override
+  @Transactional(readOnly = true)
+  public Client findById(Long id) {
+    return clientDao.findById(id);
+  }
 
-  public void delete(Long id);
+  @Override
+  @Transactional
+  public void save(Client client) {
+    clientDao.save(client);
+  }
+
+  @Override
+  @Transactional
+  public void delete(Long id) {
+    clientDao.delete(id);
+  }
 
 }

@@ -25,8 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
-import es.vilex.app.dao.ClientDao;
+import es.vilex.app.aspects.DatabaseLock;
 import es.vilex.app.entities.Client;
+import es.vilex.app.services.ClientService;
 
 @Controller
 @RequestMapping("/clients")
@@ -34,12 +35,13 @@ import es.vilex.app.entities.Client;
 public class ClientController {
 
   @Autowired
-  private ClientDao clientDao;
+  private ClientService clientService;
 
   @GetMapping("/list")
+  @DatabaseLock
   public String list(Model model) {
     model.addAttribute("title", "Listado de clientes");
-    model.addAttribute("clients", clientDao.findAll());
+    model.addAttribute("clients", clientService.findAll());
     return "list";
   }
 
@@ -54,7 +56,7 @@ public class ClientController {
   public String edit(@PathVariable(value = "id") Long id, Model model) {
     Client client = null;
     if (id > 0) {
-      client = clientDao.findById(id);
+      client = clientService.findById(id);
     } else {
       return "redirect:/list";
     }
@@ -70,7 +72,7 @@ public class ClientController {
       model.addAttribute("title", "Formulario de cliente");
       return "form";
     }
-    clientDao.save(client);
+    clientService.save(client);
     status.setComplete();
     return "redirect:list";
   }
@@ -78,7 +80,7 @@ public class ClientController {
   @RequestMapping(value = "/delete/{id}")
   public String delete(@PathVariable Long id) {
     if (id > 0) {
-      clientDao.delete(id);
+      clientService.delete(id);
     }
     return "redirect:/clients/list";
   }

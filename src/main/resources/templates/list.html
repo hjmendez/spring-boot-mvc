@@ -68,7 +68,7 @@
             		<th>BORRAR</th>
             	</thead>
             	<tbody>
-            		<tr th:each="client: ${clients}">
+            		<tr th:each="client: ${clients}">            			
             			<td th:text="${client.id}"></td>
             			<td th:text="${client.name}"></td>
             			<td th:text="${client.surname}"></td>
@@ -76,7 +76,7 @@
             			<td th:text="${client.birthDate}"></td> 
             			<td th:text="${client.createAt}"></td>  
             			<td><a th:href="@{/clients/form/} + ${client.id}" th:text="'editar'"></a></td>
-            			<td><a th:href="@{/clients/delete/} + ${client.id}" th:text="'eliminar'" onclick="return confirm('¿Estás seguro que quieres eliminar el elemento?')"></td>          		            			
+            			<td><a th:href="@{/clients/delete/} + ${client.id}" th:text="'eliminar'" onclick="return confirm('¿Estás seguro que quieres eliminar el elemento?')"></a></td>          		            			
             		</tr>
             	</tbody>
             </table>  
