@@ -15,6 +15,7 @@
 package es.vilex.app.services;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,13 +31,19 @@ public class ClientServiceImpl implements ClientService {
   @Override
   @Transactional(readOnly = true)
   public List<Client> findAll() {
-    return clientDao.findAll();
+    return (List<Client>) clientDao.findAll();
   }
 
   @Override
   @Transactional(readOnly = true)
   public Client findById(Long id) {
-    return clientDao.findById(id);
+    Optional<Client> optionalClient = clientDao.findById(id);
+    if (optionalClient.isPresent()) {
+      return optionalClient.get();
+    } else {
+      return null;
+    }
+
   }
 
   @Override
@@ -48,7 +55,7 @@ public class ClientServiceImpl implements ClientService {
   @Override
   @Transactional
   public void delete(Long id) {
-    clientDao.delete(id);
+    clientDao.deleteById(id);
   }
 
 }
