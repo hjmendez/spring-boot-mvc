@@ -1,102 +1,65 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-	<title th:text="${title}"></title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<link rel="stylesheet" th:href="@{/css/main.css}" />
-</head>
-<body>	
-	
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="#">Navbar</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+<head th:replace="layout/layout :: head"></head>
+<body>
 
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-      </div>
-    </nav>
+	 <header th:replace="layout/layout :: header"></header>
 
-    <main role="main">
+	<main role="main"> <!-- Main jumbotron for a primary marketing message or call to action -->
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="display-3" th:text="${title}"></h1>
+		</div>
+	</div>
 
-      <!-- Main jumbotron for a primary marketing message or call to action -->
-      <div class="jumbotron">
-        <div class="container">
-          <h1 class="display-3" th:text="${title}"></h1>          
-        </div>
-      </div>
+	<div class="container">
+		<!-- Example row of columns -->
+		<div class="row">
+			<div class="col-md-12">
+				<div th:object="${client}" th:remove="tag">
+					<ul th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+						<li th:each="err: ${#fields.errors('*')}" th:text="${err}"></li>
+					</ul>
+				</div>
 
-      <div class="container">
-        <!-- Example row of columns -->
-        <div class="row">
-          <div class="col-md-12">
-          	<div th:object="${client}" th:remove="tag">
-          		<ul th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
-          			<li th:each="err: ${#fields.errors('*')}" th:text="${err}"></li>
-          		</ul>
-          	</div>
-          
-		  	<form th:action="@{/clients/save}" th:object="${client}" method="post">		  		
-		  		<div class="form-group">
-		  			<label class="col-sm-2 col-form-label">Nombre:</label>
-		  			<input class="col-sm-6" type="text" th:field="*{name}" th:errorclass="alert-danger">
-		  			<small th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
-		  		</div>
-		  		<div class="form-group">	
-		  			<label class="col-sm-2">Apellidos:</label>
-		  			<input class="col-sm-6" type="text" th:field="*{surname}" th:errorclass="alert-danger">
-		  			<small th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></small>
-		  		</div>
-		  		<div class="form-group">	
-		  			<label class="col-sm-2">Email:</label>
-		  			<input class="col-sm-6" type="text" th:field="*{email}" th:errorclass="alert-danger">
-		  			<small th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
-		  		</div>  
-		  		<div class="form-group">	
-		  			<label class="col-sm-2">Fecha nacimiento:</label>
-		  			<input class="col-sm-6" type="text" th:field="*{birthDate}" th:errorclass="alert-danger">
-		  			<small th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"></small>
-		  		</div>  
-		  		<div>
-		  			<input type="submit" value="Crear cliente">
-		  		</div>
-		  	</form>                     
-          </div>
-        </div>
+				<form th:action="@{/clients/save}" th:object="${client}"
+					method="post">
+					<div class="form-group">
+						<label class="col-sm-2 col-form-label">Nombre:</label> <input
+							class="col-sm-6" type="text" th:field="*{name}"
+							th:errorclass="alert-danger"> <small
+							th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2">Apellidos:</label> <input class="col-sm-6"
+							type="text" th:field="*{surname}" th:errorclass="alert-danger">
+						<small th:if="${#fields.hasErrors('surname')}"
+							th:errors="*{surname}"></small>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2">Email:</label> <input class="col-sm-6"
+							type="text" th:field="*{email}" th:errorclass="alert-danger">
+						<small th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2">Fecha nacimiento:</label> <input
+							class="col-sm-6" type="text" th:field="*{birthDate}"
+							th:errorclass="alert-danger"> <small
+							th:if="${#fields.hasErrors('birthDate')}"
+							th:errors="*{birthDate}"></small>
+					</div>
+					<div>
+						<input type="submit" value="Crear cliente">
+					</div>
+				</form>
+			</div>
+		</div>
 
-        <hr>
+		<hr>
 
-      </div> <!-- /container -->
+	</div>
+	<!-- /container --> </main>
 
-    </main>
-
-    <footer class="container">
-      <p style="display:inline">&copy; Company 2017-2018</p>           
-      <img class="logo" th:src="@{/img/logo.png}" width="160px" height="20px">
-    </footer>	
+	<footer th:replace="layout/layout :: footer"></footer>
 </body>
 </html>
