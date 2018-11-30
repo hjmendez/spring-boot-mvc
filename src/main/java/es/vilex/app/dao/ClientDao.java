@@ -5,18 +5,14 @@ import java.util.List;
 import es.vilex.app.entities.Client;
 
 public interface ClientDao {
-  /**
-   * list all clients of bbdd
-   * 
-   * @return
-   */
+
   public List<Client> findAll();
 
-  /**
-   * Save or update a client
-   * 
-   * @param client
-   */
+  public Client findById(Long id);
+
   public void save(Client client);
+
+
+  public void delete(Long id);
 
 }

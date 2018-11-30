@@ -60,8 +60,7 @@
           		</ul>
           	</div>
           
-		  	<form th:action="@{/clients/save}" th:object="${client}" method="post">
-		  		<input type="hidden" th:field="*{id}">
+		  	<form th:action="@{/clients/save}" th:object="${client}" method="post">		  		
 		  		<div class="form-group">
 		  			<label class="col-sm-2 col-form-label">Nombre:</label>
 		  			<input class="col-sm-6" type="text" th:field="*{name}" th:errorclass="alert-danger">
