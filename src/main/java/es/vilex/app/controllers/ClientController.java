@@ -16,6 +16,7 @@ package es.vilex.app.controllers;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,15 +30,17 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.vilex.app.aspects.DatabaseLock;
+import es.vilex.app.config.AppConstants;
 import es.vilex.app.entities.Client;
 import es.vilex.app.services.ClientService;
+import es.vilex.app.util.paginator.PageRender;
 
 @Controller
 @RequestMapping("/clients")
 @SessionAttributes("client")
 public class ClientController {
 
-  private final static int PAGE_SIZE_DEFATULT = 5;
+
 
   @Autowired
   private ClientService clientService;
@@ -45,9 +48,12 @@ public class ClientController {
   @GetMapping("/list")
   @DatabaseLock
   public String list(Model model, @RequestParam(name = "page", defaultValue = "0") int page) {
-    PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE_DEFATULT);
+    PageRequest pageRequest = PageRequest.of(page, AppConstants.PAGE_SIZE_DEFATULT);
+    Page<Client> clients = clientService.findAll(pageRequest);
+    PageRender<Client> pageRender = new PageRender<Client>("/clients/list", clients);
     model.addAttribute("title", "Listado de clientes");
-    model.addAttribute("clients", clientService.findAll(pageRequest));
+    model.addAttribute("clients", clients);
+    model.addAttribute("page", pageRender);
     return "list";
   }
 
