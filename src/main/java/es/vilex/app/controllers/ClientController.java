@@ -14,12 +14,13 @@
 
 package es.vilex.app.controllers;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 import javax.validation.Valid;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,7 +47,7 @@ import es.vilex.app.util.paginator.PageRender;
 @SessionAttributes("client")
 public class ClientController {
 
-
+  private final Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
 
   @Autowired
   private ClientService clientService;
@@ -96,15 +97,18 @@ public class ClientController {
       return "form";
     }
     if (!photo.isEmpty()) {
-      Path photosPath = Paths.get("src//main//resources//static//uploads");
-      String rootPath = photosPath.toFile().getAbsolutePath();
+      String uniqueFileName = UUID.randomUUID().toString() + "_" + photo.getOriginalFilename();
+      Path rootPath = Paths.get("uploads").resolve(uniqueFileName);
+      Path rootAbsolutPath = rootPath.toAbsolutePath();
+
+      log.info(String.format("rootPath: %s", rootPath));
+      log.info(String.format("rootAbsolutPath: %s", rootAbsolutPath));
+
       try {
-        byte[] bytes = photo.getBytes();
-        Path completePath = Paths.get(rootPath + File.separator + photo.getOriginalFilename());
-        Files.write(completePath, bytes);
-        flash.addFlashAttribute("info", String.format(
-            "Ha sudido correctamente la foto al cliente, [%s]", photo.getOriginalFilename()));
-        client.setPhoto(photo.getOriginalFilename());
+        Files.copy(photo.getInputStream(), rootAbsolutPath);
+        flash.addFlashAttribute("info",
+            String.format("Ha sudido correctamente la foto al cliente, [%s]", uniqueFileName));
+        client.setPhoto(uniqueFileName);
       } catch (IOException e) {
 
         e.printStackTrace();
