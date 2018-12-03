@@ -12,16 +12,18 @@
  */
 
 
-package es.vilex.app.config;
+package es.vilex.app.services;
 
-public class AppConstants {
+import java.io.IOException;
+import java.net.MalformedURLException;
+import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 
-  private AppConstants() {
-    throw new IllegalStateException("Utility class");
-  }
+public interface UploadFileService {
+  public Resource load(String filename) throws MalformedURLException;
 
-  public static final int PAGE_SIZE_DEFATULT = 5;
-  public static final String UPLOADS_FOLDER = "uploads";
+  public String copy(MultipartFile file) throws IOException;
 
+  public boolean delete(String filename);
 
 }

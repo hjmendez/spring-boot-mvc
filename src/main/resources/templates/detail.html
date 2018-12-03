@@ -15,7 +15,7 @@
 				<li class="list-group-item" th:text="${client.email}"></li>
 				<li class="list-group-item" th:text="${client.birthDate}"></li>
 				<li class="list-group-item" th:if="${client.photo != null}" >
-					<img th:src="@{'/uploads/' + ${client.photo}}">
+					<img th:src="@{'/clients/uploads/' + ${client.photo}}">
 				</li>
 									
 			</ul>		

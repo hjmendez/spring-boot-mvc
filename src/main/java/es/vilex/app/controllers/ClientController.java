@@ -15,15 +15,15 @@
 package es.vilex.app.controllers;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import java.net.MalformedURLException;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,6 +40,7 @@ import es.vilex.app.aspects.DatabaseLock;
 import es.vilex.app.config.AppConstants;
 import es.vilex.app.entities.Client;
 import es.vilex.app.services.ClientService;
+import es.vilex.app.services.UploadFileService;
 import es.vilex.app.util.paginator.PageRender;
 
 @Controller
@@ -51,6 +52,21 @@ public class ClientController {
 
   @Autowired
   private ClientService clientService;
+
+  @Autowired
+  private UploadFileService uploadFileService;
+
+  @GetMapping(value = "/uploads/{filename:.+}")
+  public ResponseEntity<Resource> showPhoto(@PathVariable String filename) {
+    Resource recurso = null;
+    try {
+      recurso = uploadFileService.load(filename);
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
+    return (ResponseEntity<Resource>) ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+        "attachment; filename=\"" + recurso.getFilename() + "\"").body(recurso);
+  }
 
   @GetMapping("/list")
   @DatabaseLock
@@ -97,24 +113,21 @@ public class ClientController {
       return "form";
     }
     if (!photo.isEmpty()) {
-      String uniqueFileName = UUID.randomUUID().toString() + "_" + photo.getOriginalFilename();
-      Path rootPath = Paths.get("uploads").resolve(uniqueFileName);
-      Path rootAbsolutPath = rootPath.toAbsolutePath();
-
-      log.info(String.format("rootPath: %s", rootPath));
-      log.info(String.format("rootAbsolutPath: %s", rootAbsolutPath));
-
-      try {
-        Files.copy(photo.getInputStream(), rootAbsolutPath);
-        flash.addFlashAttribute("info",
-            String.format("Ha sudido correctamente la foto al cliente, [%s]", uniqueFileName));
-        client.setPhoto(uniqueFileName);
-      } catch (IOException e) {
-
-        e.printStackTrace();
+      // usuario existe y tiene una foto (borramos la antigua)
+      if (client.getId() != null && client.getPhoto() != null) {
+        if (uploadFileService.delete(client.getPhoto())) {
+          flash.addFlashAttribute("info", "imagen eliminada: " + client.getPhoto());
+        }
       }
-
+      String uniqueFileName;
+      try {
+        uniqueFileName = uploadFileService.copy(photo);
+        client.setPhoto(uniqueFileName);
+      } catch (IOException e1) {
+        e1.printStackTrace();
+      }
     }
+
     String msgFlash =
         client.getId() == null ? "Cliente creado con éxisto" : "Cliente editado con éxito";
 
@@ -126,11 +139,21 @@ public class ClientController {
 
   @RequestMapping(value = "/delete/{id}")
   public String delete(@PathVariable Long id, RedirectAttributes flash) {
-    if (id > 0) {
+    Client client = clientService.findById(id);
+    if (client == null) {
+      flash.addFlashAttribute("error", "Cliente no existe en la base de datos");
+      return "redirect:/clients/list";
+    } else {
       clientService.delete(id);
       flash.addFlashAttribute("success", "Cliente eliminado correctamente");
+      if (client.getPhoto() != null) {
+        if (uploadFileService.delete(client.getPhoto())) {
+          flash.addFlashAttribute("info", "imagen eliminada: " + client.getPhoto());
+        }
+      }
+      return "redirect:/clients/list";
     }
-    return "redirect:/clients/list";
+
   }
 
 
