@@ -14,6 +14,11 @@
 
 package es.vilex.app.controllers;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.vilex.app.aspects.DatabaseLock;
 import es.vilex.app.config.AppConstants;
@@ -84,10 +90,26 @@ public class ClientController {
 
   @RequestMapping(value = "/save", method = RequestMethod.POST)
   public String save(@Valid Client client, BindingResult result, Model model, SessionStatus status,
-      RedirectAttributes flash) {
+      RedirectAttributes flash, @RequestParam("file") MultipartFile photo) {
     if (result.hasErrors()) {
       model.addAttribute("title", "Formulario de cliente");
       return "form";
+    }
+    if (!photo.isEmpty()) {
+      Path photosPath = Paths.get("src//main//resources//static//uploads");
+      String rootPath = photosPath.toFile().getAbsolutePath();
+      try {
+        byte[] bytes = photo.getBytes();
+        Path completePath = Paths.get(rootPath + File.separator + photo.getOriginalFilename());
+        Files.write(completePath, bytes);
+        flash.addFlashAttribute("info", String.format(
+            "Ha sudido correctamente la foto al cliente, [%s]", photo.getOriginalFilename()));
+        client.setPhoto(photo.getOriginalFilename());
+      } catch (IOException e) {
+
+        e.printStackTrace();
+      }
+
     }
     String msgFlash =
         client.getId() == null ? "Cliente creado con éxisto" : "Cliente editado con éxito";
@@ -106,5 +128,20 @@ public class ClientController {
     }
     return "redirect:/clients/list";
   }
+
+
+  @GetMapping(value = "/detail/{id}")
+  public String showPhoto(@PathVariable Long id, Model model, RedirectAttributes flash) {
+    Client client = clientService.findById(id);
+    if (client == null) {
+      flash.addFlashAttribute("error", "Cliente no existe en la base de datos");
+      return "redirect:/clients/list";
+    }
+    model.addAttribute("title", "Ver cliente");
+    model.addAttribute("client", client);
+
+    return "detail";
+  }
+
 
 }
