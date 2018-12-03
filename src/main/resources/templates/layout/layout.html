@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<title th:text="${title}"></title>
 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/css/jquery-ui.min.css}" />
 	<link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 <body>	
@@ -56,7 +57,7 @@
       
 
       </div> <!-- /container -->
-s
+
     </main>
 
     <footer th:fragment="footer" class="container">
@@ -67,7 +68,10 @@ s
 	  <div>
 	  	  <p style="display:inline">&copy; Company 2017-2018</p>           
       	  <img class="logo" th:src="@{/img/logo.png}" width="160px" height="20px">
-	  </div>			
+	  </div>	
+	  <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	  <script th:src="@{/js/bootstrap.min.js}"></script>
+	  <script th:src="@{/js/jquery-ui.min.js}"></script>
     </footer>	
 </body>
 </html>

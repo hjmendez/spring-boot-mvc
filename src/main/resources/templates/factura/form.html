@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout :: head"></head>
+<body>
+
+	 <header th:replace="layout/layout :: header"></header>
+
+	<main role="main"> <!-- Main jumbotron for a primary marketing message or call to action -->
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="display-3" th:text="${title}"></h1>
+		</div>
+	</div>
+
+	<div class="container">
+		<!-- Example row of columns -->
+		<div class="row">
+			<div class="col-md-12">
+				<div th:object="${factura}" th:remove="tag">
+					<ul th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+						<li th:each="err: ${#fields.errors('*')}" th:text="${err}"></li>
+					</ul>
+				</div>
+
+				<form th:action="@{/factura/save}" th:object="${factura}"
+					method="post" enctype="multipart/form-data">
+					
+					<div class="form-group">
+						<label class="col-sm-2 col-form-label">Cliente:</label> 
+						<input th:value="${factura.cliente.name}" disabled="disabled"/>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 col-form-label">Descripción:</label> <input
+							class="col-sm-6" type="text" th:field="*{descripcion}"
+							th:errorclass="alert-danger"> <small
+							th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></small>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2">Observación:</label> <input class="col-sm-6"
+							type="text" th:field="*{observacion}" th:errorclass="alert-danger">
+						<small th:if="${#fields.hasErrors('observacion')}"
+							th:errors="*{observacion}"></small>
+					</div>
+					
+					<div class="form-group">
+						<label for="buscar_producto" class="col-sm-2" th:text="'Buscar producto'"></label>
+						<input type="text" name="buscar_producto" id="buscar_producto">	
+					</div>					
+										
+					<div>
+						<input type="submit" value="Crear factura">
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<hr>
+
+	</div>
+	<!-- /container --> </main>
+
+	<footer th:replace="layout/layout :: footer"></footer>
+	<script th:replace="factura/js/autocomplete-productos :: javascript"></script>
+</body>
+</html>

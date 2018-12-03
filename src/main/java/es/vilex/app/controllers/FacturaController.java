@@ -14,6 +14,7 @@
 
 package es.vilex.app.controllers;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +25,9 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.vilex.app.entities.Client;
 import es.vilex.app.entities.Factura;
+import es.vilex.app.entities.Producto;
 import es.vilex.app.services.ClientService;
+import es.vilex.app.services.ProductoService;
 
 @Controller
 @RequestMapping("/factura")
@@ -33,6 +36,9 @@ public class FacturaController {
 
   @Autowired
   private ClientService clientService;
+
+  @Autowired
+  private ProductoService productoService;
 
   @GetMapping("/form/{clienteId}")
   public String create(@PathVariable Long clienteId, Model model, RedirectAttributes flash) {
@@ -50,6 +56,11 @@ public class FacturaController {
     model.addAttribute("title", "Crear factura");
 
     return "/factura/form";
+  }
+
+  @GetMapping(value = "cargar-productos/{term}", produces = {"application/json"})
+  public List<Producto> cargarProductos(@PathVariable String term) {
+    return productoService.findByNombre(term);
   }
 
 }
