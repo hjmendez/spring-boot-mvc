@@ -18,7 +18,28 @@
 					<img th:src="@{'/clients/uploads/' + ${client.photo}}">
 				</li>
 									
-			</ul>		
+			</ul>
+			
+			<br>		
+			
+			<div th:if="${client.facturas.size() == 0}" class="alert alert-info" th:text="'No hay facturas para el cliente'"></div>
+			
+			<table th:if="${not #lists.isEmpty(client.facturas)}" class="table table-bordered table-striped my-4">
+				<thead>
+					<th>Factura</th>
+					<th>Descripción</th>
+					<th>Fecha</th>
+					<th>Total</th>
+				</thead>
+				<tbody>
+					<tr th:each="factura: ${client.facturas}">
+						<td th:text="${factura.id}"></td>
+						<td th:text="${factura.descripcion}"></td>
+						<td th:text="${factura.createAt}"></td>
+						<td th:text="${factura.total}"></td>
+					</tr> 
+				</tbody>
+			</table>
 			
 		</div>
 	</div>
