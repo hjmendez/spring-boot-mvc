@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 import es.vilex.app.config.AppConstants;
 
@@ -67,6 +68,16 @@ public class UploadFileServiceImpl implements UploadFileService {
 
   public Path getPath(String filename) {
     return Paths.get(AppConstants.UPLOADS_FOLDER).resolve(filename).toAbsolutePath();
+  }
+
+  @Override
+  public void deleteAll() {
+    FileSystemUtils.deleteRecursively(Paths.get(AppConstants.UPLOADS_FOLDER).toFile());
+  }
+
+  @Override
+  public void init() throws IOException {
+    Files.createDirectories(Paths.get(AppConstants.UPLOADS_FOLDER));
   }
 
 }
