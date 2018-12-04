@@ -15,19 +15,25 @@
 package es.vilex.app.controllers;
 
 import java.util.List;
+import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.vilex.app.entities.Client;
 import es.vilex.app.entities.Factura;
+import es.vilex.app.entities.ItemFactura;
 import es.vilex.app.entities.Producto;
 import es.vilex.app.services.ClientService;
+import es.vilex.app.services.FacturaService;
 import es.vilex.app.services.ProductoService;
 
 @Controller
@@ -35,11 +41,16 @@ import es.vilex.app.services.ProductoService;
 @SessionAttributes("factura")
 public class FacturaController {
 
+  private final Logger log = LoggerFactory.getLogger(getClass());
+
   @Autowired
   private ClientService clientService;
 
   @Autowired
   private ProductoService productoService;
+
+  @Autowired
+  private FacturaService facturaService;
 
   @GetMapping("/form/{clienteId}")
   public String create(@PathVariable Long clienteId, Model model, RedirectAttributes flash) {
@@ -57,6 +68,27 @@ public class FacturaController {
     model.addAttribute("title", "Crear factura");
 
     return "/factura/form";
+  }
+
+  @GetMapping(value = "/form")
+  public String save(@Valid Factura factura, Model model,
+      @RequestParam(name = "item_id[]", required = false) Long[] itemIdList,
+      @RequestParam(name = "cantidad[]", required = false) Integer[] cantidadList,
+      RedirectAttributes flash) {
+
+    Integer i = 0;
+    for (Long itemId : itemIdList) {
+      Producto producto = productoService.findById(itemId);
+      ItemFactura itemFactura = new ItemFactura();
+      itemFactura.setCantidad(cantidadList[i]);
+      itemFactura.setProducto(producto);
+      factura.addItemFactura(itemFactura);
+      log.info(String.format("ID {%s}, Cantidad {%s}", itemId, cantidadList[i]));
+    }
+    flash.addFlashAttribute("success", "Factura creada con éxito");
+    facturaService.save(factura);
+
+    return "redirect:/clients/detail/" + factura.getCliente().getId();
   }
 
   @GetMapping(value = "cargar-productos/{term}", produces = {"application/json"})

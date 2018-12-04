@@ -12,18 +12,11 @@
  */
 
 
-package es.vilex.app.services;
+package es.vilex.app.dao;
 
-import java.util.List;
-import es.vilex.app.entities.Producto;
+import org.springframework.data.repository.CrudRepository;
+import es.vilex.app.entities.Factura;
 
-public interface ProductoService {
-
-  Producto findById(Long id);
-
-  public List<Producto> findByNombre(String term);
-
-  public List<Producto> findByNombreIgnoreCase(String term);
-
+public interface FacturaDao extends CrudRepository<Factura, Long> {
 
 }

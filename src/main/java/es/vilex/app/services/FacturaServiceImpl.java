@@ -14,41 +14,22 @@
 
 package es.vilex.app.services;
 
-import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import es.vilex.app.dao.ProductoDao;
-import es.vilex.app.entities.Producto;
+import es.vilex.app.dao.FacturaDao;
+import es.vilex.app.entities.Factura;
 
 @Service
-public class ProductoServiceImpl implements ProductoService {
+public class FacturaServiceImpl implements FacturaService {
 
   @Autowired
-  private ProductoDao productoDao;
+  FacturaDao facturaDao;
 
   @Override
-  @Transactional(readOnly = true)
-  public List<Producto> findByNombre(String term) {
-    return productoDao.findByNombre(term);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<Producto> findByNombreIgnoreCase(String term) {
-    return productoDao.findByNombreLikeIgnoreCase(term);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public Producto findById(Long id) {
-    Optional<Producto> optionalProducto = productoDao.findById(id);
-    if (optionalProducto.isPresent()) {
-      return optionalProducto.get();
-    } else {
-      return null;
-    }
+  @Transactional
+  public void save(Factura factura) {
+    facturaDao.save(factura);
   }
 
 
