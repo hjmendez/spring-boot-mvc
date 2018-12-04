@@ -21,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.vilex.app.entities.Client;
@@ -59,8 +60,8 @@ public class FacturaController {
   }
 
   @GetMapping(value = "cargar-productos/{term}", produces = {"application/json"})
-  public List<Producto> cargarProductos(@PathVariable String term) {
-    return productoService.findByNombre(term);
+  public @ResponseBody List<Producto> cargarProductos(@PathVariable String term) {
+    return productoService.findByNombreIgnoreCase("%" + term + "%");
   }
 
 }

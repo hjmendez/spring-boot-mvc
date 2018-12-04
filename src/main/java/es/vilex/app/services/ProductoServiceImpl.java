@@ -33,6 +33,12 @@ public class ProductoServiceImpl implements ProductoService {
     return productoDao.findByNombre(term);
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public List<Producto> findByNombreIgnoreCase(String term) {
+    return productoDao.findByNombreLikeIgnoreCase(term);
+  }
+
 
 
 }

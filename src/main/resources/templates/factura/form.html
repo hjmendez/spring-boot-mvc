@@ -47,6 +47,28 @@
 						<label for="buscar_producto" class="col-sm-2" th:text="'Buscar producto'"></label>
 						<input type="text" name="buscar_producto" id="buscar_producto">	
 					</div>					
+					
+					<br>
+					<table th:replace="factura/plantilla-items :: itemsFactura"></table>
+					
+					<br>
+					<table id="cargarItemProductos" class="table table-sm table-striped table-hover">
+						<thead>
+							<th>Nombre</th>
+							<th>Precio</th>
+							<th>Cantidad</th>
+							<th>Total</th>
+							<th>Eliminar</th>
+						</thead>
+						<tbody>							
+						</tbody>
+					</table>
+					<br>
+					
+					<h5 style="text-align:right">
+						Total: 
+						<span class="badge badge-secondary" id="gran_total">0</span>
+					</h5>
 										
 					<div>
 						<input type="submit" value="Crear factura">

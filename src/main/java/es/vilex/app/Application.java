@@ -18,6 +18,8 @@ public class Application implements CommandLineRunner {
     SpringApplication.run(Application.class);
   }
 
+  // al implementar el CommandLineRunner una vez se levantado el contexto de spring se ejecuta todos
+  // los runs
   @Override
   public void run(String... args) throws Exception {
     uploadFileService.deleteAll();

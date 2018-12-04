@@ -21,5 +21,7 @@ public interface ProductoService {
 
   public List<Producto> findByNombre(String term);
 
+  public List<Producto> findByNombreIgnoreCase(String term);
+
 
 }
