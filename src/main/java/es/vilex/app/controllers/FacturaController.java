@@ -21,8 +21,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -70,11 +72,16 @@ public class FacturaController {
     return "/factura/form";
   }
 
-  @GetMapping(value = "/form")
-  public String save(@Valid Factura factura, Model model,
+  @PostMapping(value = "/save")
+  public String save(@Valid Factura factura, BindingResult result, Model model,
       @RequestParam(name = "item_id[]", required = false) Long[] itemIdList,
       @RequestParam(name = "cantidad[]", required = false) Integer[] cantidadList,
       RedirectAttributes flash) {
+
+    if (result.hasErrors()) {
+      model.addAttribute("title", "Crear factura");
+      return "/factura/form";
+    }
 
     Integer i = 0;
     for (Long itemId : itemIdList) {
